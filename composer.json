@@ -1,0 +1,29 @@
+{
+    "name": "kakhura/laravel-galleriable",
+    "description": "This package is for create galleriable modules",
+    "keywords": ["laravel", "galleriable"],
+    "type": "library",
+    "homepage": "https://github.com/kakhura/laravel-galleriable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "kakhura",
+            "email": "giokaxura@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kakhura\\LaravelGalleriable\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Kakhura\\LaravelGalleriable\\GalleriableServiceProvider"
+            ]
+        }
+    }
+}
