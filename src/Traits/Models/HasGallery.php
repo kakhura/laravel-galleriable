@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits\Models;
+namespace Kakhura\Galleriable\Traits\Models;
 
 use Kakhura\LaravelGalleriable\Gallery\Gallery;
 use Illuminate\Database\Eloquent\Collection;

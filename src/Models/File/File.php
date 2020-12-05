@@ -6,7 +6,6 @@ use Kakhura\LaravelGalleriable\Models\Base;
 use Kakhura\LaravelGalleriable\Models\Gallery\Gallery;
 
 /**
- * @property string uuid
  * @property int id
  * @property string url
  * @property int type_id

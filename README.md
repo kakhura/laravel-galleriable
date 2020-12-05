@@ -1,16 +1,16 @@
-## kakhura/laravel-check-requests
+## kakhura/laravel-galleriable
 
+This package is for create modules, which has media gallery.
 ### Docs
 * [Installation](#installation)
 * [Configuration (Config based management)](#configuration)
-* [Views](#views)
 * [Migrations](#migrations)
 
 ## Installation
 Add the package in your composer.json by executing the command.
 
 ```bash
-composer require kakhura/laravel-check-requests
+composer require kakhura/laravel-galleriable
 ```
 
 For Laravel versions before 5.5 or if not using **auto-discovery**, register the service provider in `config/app.php`
@@ -32,7 +32,7 @@ If you want to change ***default configuration***, you must publish default conf
 php artisan vendor:publish --tag=kakhura-galleriable-config
 ```
 
-This command will copy file `[/vendor/kakhura/laravel-check-requests/config/kakhura.galleriable.php]` to `[/config/kakhura.galleriable.php]`
+This command will copy file `[/vendor/kakhura/laravel-galleriable/config/kakhura.galleriable.php]` to `[/config/kakhura.galleriable.php]`
 
 Default `kakhura.galleriable.php` looks like:
 ```php
@@ -51,57 +51,49 @@ return [
     'use_auth_user_check' => false,
 ];
 ```
-## Views
-After publish [Configuration](#configuration), you must publish **views**, by running this command in console:
-```bash
-php artisan vendor:publish --tag=kakhura-galleriable-views
-```
 
-This command will copy file `[/vendor/kakhura/laravel-check-requests/resources/views]` to `[/resources/views/vendor/admin/check-requests]`
+This command will copy file `[/vendor/kakhura/laravel-galleriable/resources/views]` to `[/resources/views/vendor/admin/galleriable]`
 
 ## Migrations
-After publish [Views](#views), you must publish **migrations**, by running this command in console:
+After publish [Configuration](#configuration), you must publish **migrations**, by running this command in console:
 ```bash
 php artisan vendor:publish --tag=kakhura-galleriable-migrations
 ```
 
-This command will copy file `[/vendor/kakhura/laravel-check-requests/database/migrations]` to `[/database/migrations]`
+This command will copy file `[/vendor/kakhura/laravel-galleriable/database/migrations]` to `[/database/migrations]`
 
-After publish [Migrations](#migrations), you must add `HasRelatedRequest` trait in your model in which you want check if request already had sent:
+After publish [Migrations](#migrations), you must add `HasGallery` trait in your model which you want to has gallery:
 ```php
-use Kakhura\Galleriable\Traits\Models\HasRelatedRequest;
+use Kakhura\Galleriable\Traits\Models\HasGallery;
 
-class Application extends Model
+class Post extends Model
 {
-    use HasRelatedRequest;
+    use HasGallery;
 }
 
 ```
-You must create `RequestIdentifier` instance in all your model create functionality like this:
+You must sync `Gallery` in all your model create functionality like this:
 ```php
-use Models\Application;
 
-class ApplicationService extends Service
+use Models\Post;
+
+class PostService extends Service
 {
     public fucntion create(array $data) 
     {
         ...
-        $application = Application::create($data);
-        $application->createRequestIdentifier(strval($requestId));
+        $post = Post::create($data);
+        $images = [];
+        foreach (Arr::get($data, 'images') as $key => $image) {
+            $file = Helper::uploadFile($data, $fileType);
+            $images[] = [
+                'image_id' => $file->id,
+                'sort_index' => $key,
+            ];
+        }
+        $post->syncGallery($images);
         ...
     }
 }
-
-```
-After this, all of your route on which you want to check request existence, you must use middleware alias `with_request_identifier`.
-
-Also, you can check if request already sent and receive model on which request had sent. Endpoint is `http://domain.com/requests/check/{requestId}`. This endpoint return 404 not found if request not found. If request found, you will receive response like this:
-
- ```php
-return [
-    'id' => 'model_uuid' ?: 'model_id',
-    'model' => 'application',
-];
- ```
 
 Enjoy.
